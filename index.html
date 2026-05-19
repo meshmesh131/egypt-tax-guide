@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليلك الضريبي المصري | حاسبة الضرائب والإجراءات لكل مهنة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+        }
+        
+        /* Custom Scrollbar for better UI */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669; 
+        }
+
+        .tab-active {
+            border-bottom: 3px solid #10b981;
+            color: #10b981;
+            font-weight: 700;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white py-8 shadow-lg relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 2px, transparent 2px); background-size: 30px 30px;"></div>
+        
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3"><i class="fa-solid fa-scale-balanced mr-2 ml-2"></i>دليلك الضريبي المصري</h1>
+            <p class="text-emerald-100 max-w-2xl mx-auto text-lg">حاسبة مبسطة لضرائب الدخل، دليلك للأوراق المطلوبة، وخطوات فتح الملف الضريبي حسب مهنتك.</p>
+        </div>
+    </header>
+
+    <!-- Top AdSense Banner -->
+    <div class="container mx-auto px-4 mt-6">
+        <div class="bg-slate-200 border-2 border-dashed border-slate-400 text-slate-500 text-center py-4 rounded-xl text-sm flex flex-col items-center justify-center min-h-[90px]">
+            <i class="fa-solid fa-rectangle-ad text-2xl mb-1"></i>
+            <span>مساحة إعلانية (Google AdSense) - 728x90</span>
+        </div>
+    </div>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Right Column: Calculator Input -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-emerald-500">
+                    <h2 class="text-xl font-bold mb-6 text-slate-800 flex items-center">
+                        <i class="fa-solid fa-calculator text-emerald-500 ml-2"></i> حاسبة ضريبة الدخل
+                    </h2>
+                    
+                    <form id="taxForm" class="space-y-5">
+                        
+                        <!-- Profession Selection -->
+                        <div>
+                            <label for="professionSelect" class="block text-sm font-bold text-slate-700 mb-2">اختر المهنة / نوع النشاط</label>
+                            <div class="relative">
+                                <select id="professionSelect" class="w-full pl-3 pr-10 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 text-slate-700 font-semibold appearance-none">
+                                    <option value="freelancer">مستقل / عمل حر عبر الإنترنت (Freelancer)</option>
+                                    <option value="professional">مهن حرة (طبيب، مهندس، محامي، محاسب)</option>
+                                    <option value="commercial">نشاط تجاري / صناعي (محل، شركة صغيرة)</option>
+                                    <option value="employee">موظف (قطاع خاص / عام)</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Income Input -->
+                        <div>
+                            <label for="incomeAmount" class="block text-sm font-bold text-slate-700 mb-2">صافي الدخل / الأرباح</label>
+                            
+                            <div class="flex mb-2 bg-slate-100 rounded-lg p-1">
+                                <button type="button" id="btnMonthly" class="flex-1 py-1.5 text-sm font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all">شهري</button>
+                                <button type="button" id="btnYearly" class="flex-1 py-1.5 text-sm font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all">سنوي</button>
+                            </div>
+
+                            <div class="relative">
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 font-bold">ج.م</span>
+                                <input type="number" id="incomeAmount" placeholder="0.00" min="0" step="100" required
+                                    class="w-full pl-4 pr-14 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-xl font-bold text-left" dir="ltr">
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Calculation Results -->
+                    <div class="mt-8 bg-slate-800 rounded-xl p-5 text-white">
+                        <h3 class="text-emerald-400 font-bold mb-4 border-b border-slate-600 pb-2 text-sm">التقدير الضريبي السنوي (حسب شرائح الدخل)*</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300 text-sm">إجمالي الدخل السنوي:</span>
+                                <span class="font-bold text-lg"><span id="yearlyIncomeResult">0</span> ج.م</span>
+                            </div>
+                            <div class="flex justify-between items-center text-emerald-300">
+                                <span class="text-sm">الضريبة المقدرة (سنوياً):</span>
+                                <span class="font-bold text-2xl"><span id="taxAmountResult">0</span> ج.م</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 border-t border-slate-600">
+                                <span class="text-slate-300 text-sm">صافي الدخل بعد الضريبة:</span>
+                                <span class="font-bold text-lg text-white"><span id="netIncomeResult">0</span> ج.م</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-4 leading-tight">*هذه الأرقام تقريبية ومبنية على شرائح ضريبة الدخل للأشخاص الطبيعيين. لا تشمل ضريبة القيمة المضافة أو الخصومات الأخرى.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Column: Information & Procedures -->
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden h-full">
+                    
+                    <!-- Tabs Header -->
+                    <div class="flex border-b border-slate-200 bg-slate-50">
+                        <button class="tab-btn tab-active flex-1 py-4 px-2 text-sm md:text-base font-semibold text-slate-600 hover:text-emerald-600 transition-colors" data-target="docs">
+                            <i class="fa-regular fa-folder-open ml-1"></i> الأوراق المطلوبة
+                        </button>
+                        <button class="tab-btn flex-1 py-4 px-2 text-sm md:text-base font-semibold text-slate-600 hover:text-emerald-600 transition-colors" data-target="steps">
+                            <i class="fa-solid fa-list-check ml-1"></i> خطوات الإجراءات
+                        </button>
+                        <button class="tab-btn flex-1 py-4 px-2 text-sm md:text-base font-semibold text-slate-600 hover:text-emerald-600 transition-colors" data-target="links">
+                            <i class="fa-solid fa-link ml-1"></i> مواقع هامة
+                        </button>
+                    </div>
+
+                    <!-- Tabs Content -->
+                    <div class="p-6 md:p-8 min-h-[400px]">
+                        
+                        <!-- Content: Docs -->
+                        <div id="content-docs" class="tab-content fade-in block">
+                            <h3 class="text-xl font-bold text-emerald-600 mb-4 flex items-center">
+                                <span id="docsTitle">الأوراق المطلوبة للمستقلين (Freelancers)</span>
+                            </h3>
+                            <ul id="docsList" class="space-y-3 text-slate-700 leading-relaxed list-disc list-inside marker:text-emerald-500">
+                                <!-- Populated by JS -->
+                            </ul>
+                            <div class="mt-6 bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg text-sm text-amber-800">
+                                <i class="fa-solid fa-triangle-exclamation ml-1"></i> <strong>نصيحة:</strong> يفضل تجهيز صورتين من كل مستند مع الاحتفاظ بالأصول للاطلاع عليها.
+                            </div>
+                        </div>
+
+                        <!-- Content: Steps -->
+                        <div id="content-steps" class="tab-content fade-in hidden">
+                            <h3 class="text-xl font-bold text-emerald-600 mb-4">خطوات فتح الملف الضريبي</h3>
+                            <div class="relative border-r-2 border-emerald-200 pr-6 space-y-6" id="stepsList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Content: Links -->
+                        <div id="content-links" class="tab-content fade-in hidden">
+                            <h3 class="text-xl font-bold text-emerald-600 mb-4">روابط المواقع الحكومية الهامة</h3>
+                            <div class="grid gap-4" id="linksList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom AdSense Banner -->
+    <div class="container mx-auto px-4 mb-8">
+        <div class="bg-slate-200 border-2 border-dashed border-slate-400 text-slate-500 text-center py-4 rounded-xl text-sm flex flex-col items-center justify-center min-h-[250px] max-w-3xl mx-auto">
+            <i class="fa-solid fa-rectangle-ad text-3xl mb-2"></i>
+            <span>مساحة إعلانية سفلية (مربع متجاوب أو 300x250)</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm border-t-4 border-emerald-600 mt-auto">
+        <div class="container mx-auto px-4">
+            <p class="font-bold text-white mb-2">&copy; 2026 دليلك الضريبي المصري. جميع الحقوق محفوظة.</p>
+            <div class="mt-3 flex justify-center flex-wrap gap-4 text-xs md:text-sm">
+                <a href="privacy.html" class="hover:text-emerald-400 transition-colors underline underline-offset-4">سياسة الخصوصية</a>
+                <span class="hidden md:inline">|</span>
+                <!-- استخدمنا صفحة إخلاء المسؤولية كجزء من الفوتر لتسهيل الأمر -->
+                <a href="contact.html" class="hover:text-emerald-400 transition-colors underline underline-offset-4">اتصل بنا</a>
+            </div>
+            <p class="mt-6 text-xs text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                <strong>إخلاء مسؤولية:</strong> هذا الموقع هو أداة استرشادية فقط لتسهيل الحسابات بناءً على الشرائح الضريبية العامة. القوانين والنسب الضريبية قابلة للتعديل من قبل مصلحة الضرائب المصرية. يُنصح دائماً باستشارة محاسب قانوني معتمد أو مراجعة مأمورية الضرائب التابع لها لاتخاذ القرارات المالية الرسمية.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Data Object for Professions ---
+            const professionData = {
+                freelancer: {
+                    title: "العمل الحر عبر الإنترنت (Freelancers/صناع المحتوى)",
+                    docs: [
+                        "صورة بطاقة الرقم القومي (سارية).",
+                        "إيصال مرافق (كهرباء، ماء، غاز) لمحل الإقامة للتأكد من العنوان.",
+                        "عقد إيجار أو تمليك لمكان مزاولة النشاط (يمكن أن يكون المنزل).",
+                        "بيانات طبيعة النشاط (مثل: مطور ويب، مصمم، يوتيوبر، مسوق إلكتروني).",
+                        "إثبات الدخل أو التحويلات البنكية (إن طلبت المأمورية)."
+                    ],
+                    steps: [
+                        { title: "التوجه للمأمورية", desc: "الذهاب لمأمورية الضرائب التابع لها محل إقامتك (أو وحدة التجارة الإلكترونية)." },
+                        { title: "طلب فتح ملف", desc: "ملء نموذج طلب استخراج بطاقة ضريبية وفتح ملف ضريبي أفراد." },
+                        { title: "المعاينة (إن لزم)", desc: "قد يطلب المأمور معاينة لمكان النشاط، وغالباً للمنزل يتم الاكتفاء بالإقرار." },
+                        { title: "استلام البطاقة", desc: "استلام البطاقة الضريبية وتفعيل الحساب على البوابة الإلكترونية." },
+                        { title: "الإقرار السنوي", desc: "تقديم الإقرار الضريبي إلكترونياً قبل نهاية شهر مارس من كل عام." }
+                    ],
+                    links: [
+                        { name: "البوابة الإلكترونية لمصلحة الضرائب المصرية", url: "https://eta.gov.eg/", desc: "لتقديم الإقرارات الضريبية إلكترونياً." },
+                        { name: "دليل التجارة الإلكترونية وصناع المحتوى", url: "https://eta.gov.eg/", desc: "كتيب إرشادي تصدره المصلحة لليوتيوبرز والمستقلين." }
+                    ]
+                },
+                professional: {
+                    title: "المهن الحرة (طبيب، محامي، مهندس، محاسب)",
+                    docs: [
+                        "صورة بطاقة الرقم القومي.",
+                        "صورة كارنيه النقابة المهنية (طول السنة).",
+                        "صورة من عقد إيجار أو تمليك العيادة/المكتب (مثبت التاريخ في الشهر العقاري).",
+                        "إيصال مرافق (كهرباء) لمكان مزاولة المهنة.",
+                        "ترخيص مزاولة المهنة (لبعض المهن مثل الأطباء)."
+                    ],
+                    steps: [
+                        { title: "مأمورية المهن الحرة", desc: "التوجه لمأمورية ضرائب المهن الحرة التابع لها مكان العيادة أو المكتب." },
+                        { title: "تقديم المستندات", desc: "تسليم الأوراق وملء طلب فتح ملف ضريبي مهني." },
+                        { title: "استلام البطاقة الضريبية", desc: "بعد مراجعة الأوراق والمكان، يتم إصدار البطاقة الضريبية." },
+                        { title: "الإيصالات", desc: "يجب طبع دفتر إيصالات معتمد لتقديمه للعملاء/المرضى." },
+                        { title: "الإقرار السنوي", desc: "تقديم الإقرار الخاص بالمهن الحرة قبل نهاية شهر مارس." }
+                    ],
+                    links: [
+                        { name: "منظومة الأعمال الضريبية الرئيسية (SAP)", url: "https://eta.gov.eg/", desc: "لتقديم الإقرارات المهنية." },
+                        { name: "بوابة مصر الرقمية", url: "https://digital.gov.eg/", desc: "لاستخراج وثائق الشهر العقاري والتوكيلات." }
+                    ]
+                },
+                commercial: {
+                    title: "النشاط التجاري والصناعي (محلات، شركات صغيرة)",
+                    docs: [
+                        "صورة بطاقة الرقم القومي لصاحب المنشأة.",
+                        "عقد الإيجار (مثبت التاريخ) أو عقد التمليك لمقر النشاط.",
+                        "إيصال كهرباء حديث للمقر.",
+                        "البطاقة الضريبية (تستخرج أولاً).",
+                        "شهادة الغرفة التجارية ومستخرج السجل التجاري."
+                    ],
+                    steps: [
+                        { title: "البطاقة الضريبية", desc: "التوجه للمأمورية الجغرافية وفتح ملف واستخراج بطاقة ضريبية مبدئية." },
+                        { title: "الغرفة التجارية", desc: "التوجه للغرفة التجارية التابع لها لاستخراج شهادة مزاولة النشاط." },
+                        { title: "السجل التجاري", desc: "التوجه لمكتب السجل التجاري واستخراج السجل بناءً على البطاقة الضريبية." },
+                        { title: "القيمة المضافة", desc: "التسجيل في ضريبة القيمة المضافة إذا تخطت المبيعات حد التسجيل (غالباً 500 ألف جنيه)." },
+                        { title: "الفاتورة الإلكترونية", desc: "التسجيل في منظومة الفاتورة/الإيصال الإلكتروني حسب الإلزام." }
+                    ],
+                    links: [
+                        { name: "الهيئة العامة للاستثمار والمناطق الحرة", url: "https://gafi.gov.eg/", desc: "لتأسيس الشركات بشكل رسمي." },
+                        { name: "منظومة الفاتورة الإلكترونية", url: "https://eta.gov.eg/", desc: "بوابة المصلحة للتسجيل وإصدار الفواتير." }
+                    ]
+                },
+                employee: {
+                    title: "موظف (قطاع خاص أو حكومي)",
+                    docs: [
+                        "الموظف الذي ليس له مصدر دخل آخر غير راتبه لا يحتاج لفتح ملف ضريبي بنفسه.",
+                        "إذا كان له نشاط آخر (تجاري أو مهني) بجانب الوظيفة، يجب عليه فتح ملف وتقديم إقرار يضم الراتب والدخل الآخر.",
+                        "لطلب تسوية أو كشف حساب: مفردات مرتب من جهة العمل."
+                    ],
+                    steps: [
+                        { title: "الخصم من المنبع", desc: "جهة العمل (الشركة) تقوم بخصم ضريبة كسب العمل من راتبك شهرياً بشكل تلقائي." },
+                        { title: "التوريد", desc: "تقوم الشركة بتوريد هذه الضرائب لمصلحة الضرائب وتتحمل هي المسؤولية القانونية للإقرار عنها." },
+                        { title: "حالة تعدد الدخل", desc: "إذا كنت موظفاً ولديك نشاط حر، يجب تقديم إقرار (أشخاص طبيعيين) تدرج فيه مرتبك كإيراد وتخصم منه الضريبة المسددة." }
+                    ],
+                    links: [
+                        { name: "بوابة الضرائب (لمعرفة شرائح كسب العمل)", url: "https://eta.gov.eg/", desc: "للاطلاع على التعديلات القانونية لشرائح الإعفاء." }
+                    ]
+                }
+            };
+
+            // --- UI Elements ---
+            const professionSelect = document.getElementById('professionSelect');
+            const incomeAmountInput = document.getElementById('incomeAmount');
+            const btnMonthly = document.getElementById('btnMonthly');
+            const btnYearly = document.getElementById('btnYearly');
+            
+            const yearlyIncomeResult = document.getElementById('yearlyIncomeResult');
+            const taxAmountResult = document.getElementById('taxAmountResult');
+            const netIncomeResult = document.getElementById('netIncomeResult');
+
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            // Information DOM Elements
+            const docsTitle = document.getElementById('docsTitle');
+            const docsList = document.getElementById('docsList');
+            const stepsList = document.getElementById('stepsList');
+            const linksList = document.getElementById('linksList');
+
+            let isMonthly = true;
+
+            // --- Functions ---
+
+            // 1. Calculate Tax (Based on approximate Egyptian progressive brackets for individuals)
+            function calculateTax() {
+                let inputVal = parseFloat(incomeAmountInput.value) || 0;
+                
+                // Convert to yearly for calculation
+                let yearlyIncome = isMonthly ? (inputVal * 12) : inputVal;
+                
+                let tax = 0;
+                
+                // Simplified Brackets (Approximation based on recent laws for individuals)
+                const exemption = 40000; // Personal Exemption limit roughly
+                let taxableIncome = Math.max(0, yearlyIncome - exemption);
+
+                if (taxableIncome > 0) {
+                    // Bracket 1: 0 - 15,000 (10%)
+                    let b1 = Math.min(taxableIncome, 15000);
+                    tax += b1 * 0.10;
+                    taxableIncome -= b1;
+                }
+                
+                if (taxableIncome > 0) {
+                    // Bracket 2: 15,000 - 30,000 (15%)
+                    let b2 = Math.min(taxableIncome, 15000);
+                    tax += b2 * 0.15;
+                    taxableIncome -= b2;
+                }
+                
+                if (taxableIncome > 0) {
+                    // Bracket 3: 30,000 - 160,000 (20%)
+                    let b3 = Math.min(taxableIncome, 130000);
+                    tax += b3 * 0.20;
+                    taxableIncome -= b3;
+                }
+                
+                if (taxableIncome > 0) {
+                    // Bracket 4: 160,000 - 360,000 (22.5%)
+                    let b4 = Math.min(taxableIncome, 200000);
+                    tax += b4 * 0.225;
+                    taxableIncome -= b4;
+                }
+                
+                if (taxableIncome > 0) {
+                    // Bracket 5: > 360,000 (25%)
+                    tax += taxableIncome * 0.25;
+                }
+
+                // Update UI
+                const netIncome = Math.max(0, yearlyIncome - tax);
+                
+                yearlyIncomeResult.textContent = yearlyIncome.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                taxAmountResult.textContent = tax.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                netIncomeResult.textContent = netIncome.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            }
+
+            // 2. Update Information Content based on Profession
+            function updateInfo(professionKey) {
+                const data = professionData[professionKey];
+                
+                // Update Title
+                docsTitle.textContent = `الأوراق المطلوبة: ${data.title}`;
+                
+                // Update Docs
+                docsList.innerHTML = '';
+                data.docs.forEach(doc => {
+                    const li = document.createElement('li');
+                    li.textContent = doc;
+                    docsList.appendChild(li);
+                });
+
+                // Update Steps
+                stepsList.innerHTML = '';
+                data.steps.forEach((step, index) => {
+                    const stepHtml = `
+                        <div class="relative pl-4">
+                            <span class="absolute -right-3 top-0 w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm border-2 border-emerald-500">${index + 1}</span>
+                            <h4 class="font-bold text-slate-800 mr-6">${step.title}</h4>
+                            <p class="text-slate-600 text-sm mt-1 mr-6 leading-relaxed">${step.desc}</p>
+                        </div>
+                    `;
+                    stepsList.innerHTML += stepHtml;
+                });
+
+                // Update Links
+                linksList.innerHTML = '';
+                data.links.forEach(link => {
+                    const linkHtml = `
+                        <a href="${link.url}" target="_blank" class="block p-4 border border-slate-200 rounded-xl hover:border-emerald-400 hover:shadow-md transition-all group bg-slate-50">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">${link.name}</h4>
+                                    <p class="text-sm text-slate-500 mt-1">${link.desc}</p>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 group-hover:text-emerald-500"></i>
+                            </div>
+                        </a>
+                    `;
+                    linksList.innerHTML += linkHtml;
+                });
+            }
+
+            // --- Event Listeners ---
+            
+            // Income calculation events
+            incomeAmountInput.addEventListener('input', calculateTax);
+            
+            btnMonthly.addEventListener('click', () => {
+                isMonthly = true;
+                btnMonthly.classList.replace('text-slate-500', 'text-emerald-600');
+                btnMonthly.classList.replace('hover:text-slate-700', 'bg-white');
+                btnMonthly.classList.add('shadow-sm');
+                
+                btnYearly.classList.replace('text-emerald-600', 'text-slate-500');
+                btnYearly.classList.replace('bg-white', 'hover:text-slate-700');
+                btnYearly.classList.remove('shadow-sm');
+                calculateTax();
+            });
+
+            btnYearly.addEventListener('click', () => {
+                isMonthly = false;
+                btnYearly.classList.replace('text-slate-500', 'text-emerald-600');
+                btnYearly.classList.replace('hover:text-slate-700', 'bg-white');
+                btnYearly.classList.add('shadow-sm');
+                
+                btnMonthly.classList.replace('text-emerald-600', 'text-slate-500');
+                btnMonthly.classList.replace('bg-white', 'hover:text-slate-700');
+                btnMonthly.classList.remove('shadow-sm');
+                calculateTax();
+            });
+
+            // Profession change event
+            professionSelect.addEventListener('change', (e) => {
+                updateInfo(e.target.value);
+            });
+
+            // Tabs change event
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all
+                    tabBtns.forEach(b => b.classList.remove('tab-active'));
+                    tabContents.forEach(c => {
+                        c.classList.remove('block');
+                        c.classList.add('hidden');
+                    });
+                    
+                    // Add active to clicked
+                    btn.classList.add('tab-active');
+                    const target = btn.getAttribute('data-target');
+                    document.getElementById(`content-${target}`).classList.remove('hidden');
+                    document.getElementById(`content-${target}`).classList.add('block');
+                });
+            });
+
+            // Initialize on load
+            updateInfo(professionSelect.value);
+            calculateTax();
+        });
+    </script>
+</body>
+</html>
